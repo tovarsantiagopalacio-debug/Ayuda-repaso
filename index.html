@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Interactivo - Ingeniería de Requisitos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+    <style>
+        /* Using a more modern font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Aura effect on hover for question cards */
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05), 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+        .dark .question-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 0 4px rgba(129, 140, 248, 0.3);
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .correct {
+            background-color: #28a745 !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+        .incorrect {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border-color: #dc3545 !important;
+        }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .feedback {
+            display: none;
+            font-weight: bold;
+        }
+        .feedback.correct {
+            color: #28a745;
+        }
+        .feedback.incorrect {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <div class="container mx-auto p-4 sm:p-8 max-w-4xl relative">
+        <!-- Theme Toggle Button -->
+        <div class="absolute top-4 right-4 sm:top-8 sm:right-8">
+            <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Cuestionario de Ingeniería de Requisitos</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Selecciona la respuesta que consideres correcta para cada pregunta.</p>
+        </header>
+
+        <div id="quiz-container" class="space-y-6">
+            <!-- Pregunta 1 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">1. ¿Qué son los requisitos en el desarrollo de software?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Descripciones de lo que un sistema debe hacer y las restricciones bajo las cuales debe operar.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">El código fuente final del programa ya compilado.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Especificaciones técnicas del hardware donde se ejecutará el software.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Las opiniones personales de cada desarrollador sobre el proyecto.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Questions 2 to 21 follow the same structure with dark mode classes -->
+            <!-- Example for Question 2 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">2. ¿Cuál es la diferencia principal entre requisitos funcionales y no funcionales?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Los funcionales son obligatorios y los no funcionales son opcionales.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Los funcionales describen lo que el sistema HACE, mientras que los no funcionales describen CÓMO lo hace (calidad, rendimiento).</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Los funcionales los define el cliente y los no funcionales el programador.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">No hay ninguna diferencia real, son términos intercambiables.</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 3 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">3. ¿Qué riesgo principal se corre si no se gestionan adecuadamente los cambios en los requisitos?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Un aumento descontrolado del alcance (scope creep), causando retrasos y sobrecostos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Que el programa tenga muchos errores de compilación.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Que los diseñadores gráficos no tengan trabajo que hacer.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Una mejora automática en la calidad del software.</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">4. ¿Para qué sirve un prototipo en la fase de requisitos?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Es la primera versión funcional que se vende a los clientes.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para reemplazar por completo la documentación escrita.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Para validar los requisitos con los usuarios, permitiéndoles interactuar con una versión temprana y dar retroalimentación.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para probar la velocidad del servidor antes de iniciar el desarrollo.</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 5 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">5. ¿Qué significa la "trazabilidad de requisitos"?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">La habilidad de un requisito para ser rastreado por GPS.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Un documento que se traza a mano alzada para explicar el sistema.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">La cantidad de requisitos que tiene un proyecto de software.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">La capacidad de seguir la vida de un requisito desde su origen hasta su implementación y prueba.</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 6 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">6. El criterio SMART se usa para establecer objetivos. ¿Qué significa la 'M' en SMART?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Mínimo</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Medible (Measurable)</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Mejorable</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Modular</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 7 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">7. ¿Qué es un Producto Mínimo Viable (MVP)?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Una versión del producto con las funcionalidades esenciales para resolver el problema principal del usuario y obtener feedback.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">El producto más caro y completo que se puede construir.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Un producto que no tiene errores y funciona perfectamente.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">La versión final del producto lista para la venta masiva.</button>
+                </div>
+                 <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 8 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">8. ¿Cuáles son las 4 etapas interdependientes del proceso de ingeniería de requisitos?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Diseño, Codificación, Pruebas y Despliegue.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Elicitación, Análisis, Especificación y Validación.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Compra de hardware, Instalación, Configuración y Mantenimiento.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Elicitación, Diseño, Codificación y Pruebas.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 9 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">9. ¿Cómo influye un requisito de negocio en las decisiones técnicas?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Orienta las decisiones para que la arquitectura y tecnología se alineen con los objetivos de la empresa.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">No influye, las decisiones técnicas son independientes del negocio.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Limita la creatividad de los desarrolladores.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Solo afecta al presupuesto del proyecto.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 10 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">10. Para detectar ambigüedades en los requisitos, una estrategia es:</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Escribirlos lo más rápido posible sin revisiones.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Usar un lenguaje muy técnico que solo los programadores entiendan.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Realizar revisiones formales en equipo y crear modelos visuales (diagramas).</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Preguntarle a una sola persona del equipo si entiende todo.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 11 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">11. Si los usuarios no están de acuerdo con los requisitos definidos, ¿qué se debe hacer?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Facilitar una sesión de negociación para encontrar la raíz del desacuerdo y buscar un compromiso.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Ignorar a los usuarios que no están de acuerdo y continuar con el plan original.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Cancelar el proyecto inmediatamente.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Hacer lo que diga el jefe del proyecto sin consultar a nadie más.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 12 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">12. ¿Cómo se gestionan los cambios de requisitos sin afectar negativamente el cronograma?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Aceptando todos los cambios que pida el cliente sin analizarlos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Rechazando cualquier tipo de cambio una vez iniciado el proyecto.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Estableciendo un proceso formal donde cada cambio se evalúa en impacto, costo y tiempo antes de aprobarse.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Haciendo los cambios en secreto para que la gestión no se entere.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 13 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">13. Una característica clave de una herramienta de gestión de requisitos para equipos es que sea:</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Gratuita, aunque no funcione bien.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Tan compleja que solo una persona pueda usarla.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Instalada localmente en una sola máquina sin acceso a la red.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Centralizada, con control de versiones y funciones de colaboración.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 14 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">14. ¿Qué es la "evaluación de factibilidad" de un proyecto?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Analizar si el proyecto es viable a nivel técnico, económico y operativo.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Un documento que certifica que el proyecto será un éxito garantizado.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">La fase de pruebas de software.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Decidir el nombre y el logo del proyecto.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 15 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">15. Si un proyecto tiene limitaciones de tiempo, ¿cómo se deben priorizar las funcionalidades?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Haciendo primero las más fáciles, sin importar su valor.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Dejando que cada programador elija la que más le guste.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Usando técnicas como MoSCoW o análisis costo-beneficio para enfocarse en lo que entrega más valor.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Implementando todas a la vez, pero solo a la mitad.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 16 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">16. ¿Cuál es el objetivo principal de definir el alcance de un proyecto?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Hacer el proyecto lo más grande posible.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Tener un documento largo que impresione al cliente.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Asegurarse de que el proyecto nunca termine.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Delimitar claramente qué está dentro y qué está fuera del proyecto para evitar desviaciones.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 17 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">17. ¿Por qué es importante establecer hipótesis y supuestos al inicio del proyecto?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Porque aclaran las bases sobre las que se planifica y permiten validar ideas temprano.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Porque son una pérdida de tiempo y es mejor evitarlos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para tener excusas si el proyecto fracasa.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">No es importante, se pueden definir al final del proyecto.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 18 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">18. Un formato moderno y ágil para documentar requisitos funcionales es:</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Un documento de 500 páginas en Word.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Un correo electrónico informal.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Las Historias de Usuario (Como [rol], quiero [acción] para [beneficio]).</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Diagramas de flujo complejos y detallados.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+
+            <!-- Pregunta 19 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">19. ¿Cuál de los siguientes es un ejemplo de requisito NO funcional?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">El sistema debe poder manejar 100 usuarios concurrentes sin degradar el rendimiento.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">El usuario debe poder iniciar sesión con su correo y contraseña.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">El sistema debe permitir generar un reporte de ventas en PDF.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">El usuario debe poder buscar productos por nombre.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 20 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">20. Para fomentar una comunicación efectiva en un proyecto, se debe:</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Limitar la comunicación al mínimo para no molestar a los programadores.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Programar reuniones regulares, usar un lenguaje común y mantener canales de comunicación abiertos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Comunicarse únicamente a través de documentos oficiales y firmados.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Crear grupos separados para clientes y desarrolladores sin que hablen entre ellos.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 21 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">21. ¿Qué es el "análisis de impacto"?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Medir el impacto de un meteorito en el centro de datos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Calcular cuántos usuarios nuevos tendrá la aplicación.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Evaluar los efectos que un cambio o un nuevo sistema tendrá sobre los usuarios, el negocio y otros sistemas existentes.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Una técnica para hacer que el software impacte visualmente al usuario.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+            
+            <!-- Pregunta 22 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">22. ¿Por qué es importante identificar los requisitos antes de iniciar el diseño o la codificación?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true">Para evitar costosos retrabajos, malentendidos y asegurar que todos construyan el mismo producto.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Porque es una formalidad que no tiene impacto real en el desarrollo.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para que los programadores tengan menos libertad creativa.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para poder elegir los colores y el logo de la aplicación primero.</button>
+                </div>
+                <div class="feedback mt-3 p-2 rounded-md text-center"></div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button id="reset-btn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-colors">
+                Intentar de Nuevo
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionCards = document.querySelectorAll('.question-card');
+            
+            // --- Quiz Logic ---
+            questionCards.forEach(card => {
+                const options = card.querySelectorAll('.option-btn');
+                const feedbackEl = card.querySelector('.feedback');
+
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        const parentOptions = option.parentElement;
+                        parentOptions.classList.add('disabled');
+                        
+                        const isCorrect = option.getAttribute('data-correct') === 'true';
+
+                        if (isCorrect) {
+                            option.classList.add('correct');
+                            feedbackEl.textContent = '¡Correcto!';
+                            feedbackEl.classList.add('correct');
+                        } else {
+                            option.classList.add('incorrect');
+                            feedbackEl.textContent = 'Incorrecto.';
+                            feedbackEl.classList.add('incorrect');
+                            const correctOption = parentOptions.querySelector('[data-correct="true"]');
+                            correctOption.classList.add('correct');
+                        }
+                        
+                        feedbackEl.style.display = 'block';
+                    });
+                });
+            });
+
+            // --- Reset Button Logic ---
+            const resetButton = document.getElementById('reset-btn');
+            resetButton.addEventListener('click', () => {
+                questionCards.forEach(card => {
+                    card.querySelector('.options-container').classList.remove('disabled');
+                    card.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.classList.remove('correct', 'incorrect');
+                    });
+                    const feedbackEl = card.querySelector('.feedback');
+                    feedbackEl.style.display = 'none';
+                    feedbackEl.classList.remove('correct', 'incorrect');
+                    feedbackEl.textContent = '';
+                });
+            });
+            
+            // --- Theme Toggle Logic ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const lightIcon = document.getElementById('theme-icon-light');
+            const darkIcon = document.getElementById('theme-icon-dark');
+
+            const updateIcon = () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    lightIcon.classList.remove('hidden');
+                    darkIcon.classList.add('hidden');
+                } else {
+                    lightIcon.classList.add('hidden');
+                    darkIcon.classList.remove('hidden');
+                }
+            };
+
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                updateIcon();
+            });
+
+            updateIcon(); // Set initial icon state
+        });
+    </script>
+</body>
+</html>
+
