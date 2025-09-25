@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuestionario Interactivo - Ingeniería de Requisitos</title>
     
+    <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <!-- Tus Estilos Personalizados -->
     <link rel="stylesheet" href="css/style.css">
 
     <script>
@@ -26,6 +28,7 @@
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
     <div class="container mx-auto p-4 sm:p-8 max-w-4xl relative">
+        <!-- Theme Toggle Button -->
         <div class="absolute top-4 right-4 sm:top-8 sm:right-8">
             <button id="theme-toggle"
                 class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -49,6 +52,7 @@
 
         <main id="quiz-container" class="space-y-6">
             
+            <!-- Pregunta 1 -->
             <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">1. ¿Cómo definirías los requisitos en el contexto del desarrollo de software y qué papel juegan en el éxito de un proyecto?</h3>
                 <div class="options-container space-y-3">
@@ -60,6 +64,7 @@
                 <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
             </div>
 
+            <!-- Pregunta 2 -->
             <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">2. ¿Por qué es importante identificar claramente los requisitos antes de iniciar el diseño o la codificación de un sistema?</h3>
                 <div class="options-container space-y-3">
@@ -71,7 +76,91 @@
                 <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
             </div>
 
-            </main>
+            <!-- Pregunta 3 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">3. ¿Qué diferencias encuentras entre los requisitos funcionales y no funcionales? Da ejemplos de cada uno.</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Esta opción explica la diferencia clave: los funcionales son el 'qué' (acciones, características), mientras que los no funcionales son el 'cómo' (calidad, rendimiento, seguridad). Un sistema puede ser funcional (hace lo que se pide) pero inútil si no cumple los requisitos no funcionales (es demasiado lento, inseguro o difícil de usar).">Funcionales definen QUÉ hace el sistema (ej: 'registrar usuario'), No funcionales definen CÓMO lo hace (ej: 'la página debe cargar en < 2s').</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Funcionales son las funciones (ej: 'registrar'), No funcionales son las cualidades (ej: 'que sea rápido').</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Los funcionales son obligatorios y los no funcionales son opcionales y dependen del presupuesto.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Funcionales se escriben en código y los no funcionales en documentos de Word.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+
+             <!-- Pregunta 4 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">4. ¿Cómo influye un requisito de negocio en la toma de decisiones técnicas dentro de un proyecto?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Los requisitos de negocio son la razón de ser del proyecto. Guían todas las decisiones posteriores. Por ejemplo, si un requisito de negocio es 'expandir a un mercado global', las decisiones técnicas deben incluir soporte para múltiples idiomas, escalabilidad para manejar más usuarios y cumplimiento de regulaciones internacionales.">Guía las decisiones de arquitectura y tecnología para asegurar que la solución se alinee con los objetivos de la empresa.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Asegura que la solución técnica cumpla con las metas de la empresa.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Determina el presupuesto final y la fecha de entrega del proyecto.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Define los nombres de las variables y funciones en el código.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">5. Describe las etapas del proceso de ingeniería de requisitos y explica cómo se relacionan entre sí.</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="El proceso de requisitos no es lineal, sino iterativo. La elicitación (obtener información) lleva al análisis, que puede revelar la necesidad de más elicitación. La especificación (documentar) se valida con el cliente, y esa validación puede generar nuevos requisitos o cambios, reiniciando el ciclo en una escala menor.">Elicitación (obtener), Análisis (entender), Especificación (documentar) y Validación (confirmar). Son iterativas y se retroalimentan.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Obtener, Entender, Documentar y Confirmar. Son etapas secuenciales que se hacen una tras otra.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Diseño, Codificación, Pruebas y Despliegue. Son las fases para construir el software.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Marketing, Ventas, Soporte y Mantenimiento. Son las fases del ciclo de vida de un producto.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+            
+            <!-- Pregunta 6 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">6. ¿Qué riesgos pueden surgir si no se realiza una adecuada gestión de cambios en los requisitos?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Esta opción incluye el término clave 'Scope Creep' o corrupción del alcance, que es el riesgo más conocido. Ocurre cuando se añaden nuevas funcionalidades sin control, lo que inevitablemente lleva a desviaciones en el presupuesto, los plazos y la calidad, resultando en la insatisfacción del cliente.">"Scope creep" (corrupción del alcance), aumento de costos, retrasos e insatisfacción del cliente.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Aumento de costos y retrasos en el cronograma del proyecto.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Problemas de compatibilidad con el hardware del servidor y los computadores.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Que el software tenga una interfaz gráfica muy atractiva y moderna.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+
+            <!-- Pregunta 7 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">7. ¿Qué técnicas de elicitación consideras más efectivas para proyectos con usuarios diversos? ¿Por qué?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="No existe una única técnica perfecta. La mejor estrategia es combinar varias para mitigar las debilidades de cada una. Las entrevistas son buenas para obtener detalles profundos, los talleres para negociar y lograr consenso entre diferentes roles, y los prototipos son excelentes para validar ideas visualmente con usuarios que no son técnicos.">Combinar Entrevistas (profundidad), Talleres (consenso) y Prototipos (visualización) para cubrir diferentes perfiles.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Realizar Entrevistas individuales y Talleres grupales para obtener la información necesaria.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Enviar un único cuestionario por correo electrónico a todos los involucrados.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Revisar el código fuente de las aplicaciones de la competencia.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+
+            <!-- Pregunta 8 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">8. ¿Cómo garantizarías que los requisitos recogidos reflejan realmente las necesidades de los usuarios?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="La validación es la clave. No basta con preguntar una vez; es un proceso continuo. Usar prototipos interactivos permite a los usuarios 'sentir' cómo funcionará el sistema. Las revisiones de documentos y las sesiones de feedback aseguran que la interpretación del equipo de desarrollo se alinea constantemente con la visión del usuario.">Mediante la validación constante con ellos, usando prototipos, revisiones y sesiones de feedback.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Preguntándoles a los usuarios si están de acuerdo con los documentos escritos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Asumiendo que el analista de requisitos siempre entiende todo perfectamente la primera vez.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Realizando pruebas de estrés al servidor para asegurar que todo funcione bien.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+            
+            <!-- Pregunta 9 -->
+            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">9. ¿Qué estrategias utilizarías para detectar ambigüedades o contradicciones en los requisitos recopilados?</h3>
+                <div class="options-container space-y-3">
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Detectar ambigüedades requiere un enfoque proactivo y multifacético. Las revisiones por pares (peer reviews) aportan diferentes perspectivas. Los modelos visuales (como diagramas de flujo o UML) pueden revelar inconsistencias lógicas que son difíciles de ver en texto. Un glosario asegura que todos usen los mismos términos con el mismo significado.">Realizar revisiones formales en equipo (peer reviews), crear modelos visuales (diagramas) y definir un glosario de términos.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Leer los documentos cuidadosamente y hacer preguntas si algo no está claro.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Empezar a codificar inmediatamente para descubrir los problemas en la práctica.</button>
+                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Traducir los requisitos a otro idioma y luego de vuelta al original para ver si cambian.</button>
+                </div>
+                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
+            </div>
+            
+        </main>
 
         <footer class="mt-8 text-center">
             <button id="reset-btn"
@@ -81,6 +170,7 @@
         </footer>
     </div>
 
+    <!-- Tu Lógica Personalizada -->
     <script src="js/script.js" defer></script>
 
 </body>
