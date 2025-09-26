@@ -39,6 +39,8 @@ Abre el archivo:
 Busca el archivo en tu computadora y ábrelo con tu navegador web preferido (Google Chrome, Firefox, Safari, etc.).
 
 ¡Listo!:
+<img width="879" height="553" alt="image" src="https://github.com/user-attachments/assets/b39bde43-7745-4016-bcb7-48ec2fbc3ce3" />
+
 
 Ya puedes empezar a responder las preguntas y poner a prueba tus conocimientos.
 
