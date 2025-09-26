@@ -4,174 +4,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuestionario Interactivo - Ingeniería de Requisitos</title>
-    
-    <!-- Librerías Externas -->
+    <title>Quiz Práctico de Ingeniería de Requisitos (Versión Completa)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tus Estilos Personalizados -->
-    <link rel="stylesheet" href="css/style.css">
-
-    <script>
-        // --- Theme Initializer ---
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+    <style>
+        body {
+            background-color: #121212;
+            /* Un fondo oscuro profundo */
         }
-    </script>
+
+        .question-card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+
+        .option {
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .option:hover {
+            background-color: #3a3a3a;
+            border-color: #555;
+        }
+
+        .options-container.answered .option:hover {
+            background-color: #2d2d2d;
+            border-color: #444;
+        }
+
+        .option.correct {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+        }
+
+        .option.incorrect {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
+
+        .options-container.answered .option {
+            cursor: default;
+        }
+
+        .correct-rationale-container {
+            display: none;
+            /* Oculto por defecto */
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .navigation-button {
+            background-color: #3b82f6;
+            /* blue-600 */
+            transition: background-color 0.2s;
+            display: none;
+            /* Oculto por defecto */
+        }
+
+        .navigation-button:hover {
+            background-color: #2563eb;
+            /* blue-700 */
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
-
-    <div class="container mx-auto p-4 sm:p-8 max-w-4xl relative">
-        <!-- Theme Toggle Button -->
-        <div class="absolute top-4 right-4 sm:top-8 sm:right-8">
-            <button id="theme-toggle"
-                class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <svg id="theme-icon-light" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <svg id="theme-icon-dark" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-            </button>
-        </div>
-
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Cuestionario de Ingeniería de
-                Requisitos</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-2 text-lg">Pon a prueba tus conocimientos.</p>
-            <p class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mt-4">Puntuación: <span id="score-value">0</span> / <span id="total-questions"></span></p>
+<body class="text-gray-300 font-sans">
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl min-h-screen flex flex-col justify-center">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white">Quiz Práctico de Ingeniería de Requisitos</h1>
+            <p class="text-lg text-gray-400 mt-2">Versión Interactiva Completa</p>
         </header>
 
-        <main id="quiz-container" class="space-y-6">
-            
-            <!-- Pregunta 1 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">1. ¿Cómo definirías los requisitos en el contexto del desarrollo de software y qué papel juegan en el éxito de un proyecto?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Esta es la definición más completa. Los requisitos no solo describen qué hará el sistema, sino que también establecen las restricciones (rendimiento, seguridad, etc.) y sirven como un contrato o acuerdo fundamental entre el cliente y el equipo de desarrollo.">Son la base para el acuerdo entre clientes y desarrolladores; definen qué se construirá y sus restricciones.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Son descripciones de las funciones de un sistema y definen qué se va a construir.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Son las tareas que el equipo de desarrollo debe completar durante el proyecto.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Son los lenguajes de programación y las bases de datos que se usarán.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-            <!-- Pregunta 2 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">2. ¿Por qué es importante identificar claramente los requisitos antes de iniciar el diseño o la codificación de un sistema?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="La razón principal es económica y de calidad. Identificar los requisitos correctamente desde el inicio asegura que se construya lo que el cliente realmente necesita, minimizando el riesgo de tener que hacer cambios costosos en etapas tardías del desarrollo, donde arreglar un error es exponencialmente más caro.">Para asegurar que el equipo construya el producto correcto y evitar costosos retrabajos en etapas avanzadas.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para asegurar que el equipo construya el producto solicitado y así evitar retrabajos.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para poder hacer un cronograma de trabajo exacto desde el primer día.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Para que los diseñadores gráficos puedan elegir los colores de la interfaz.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-            <!-- Pregunta 3 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">3. ¿Qué diferencias encuentras entre los requisitos funcionales y no funcionales? Da ejemplos de cada uno.</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Esta opción explica la diferencia clave: los funcionales son el 'qué' (acciones, características), mientras que los no funcionales son el 'cómo' (calidad, rendimiento, seguridad). Un sistema puede ser funcional (hace lo que se pide) pero inútil si no cumple los requisitos no funcionales (es demasiado lento, inseguro o difícil de usar).">Funcionales definen QUÉ hace el sistema (ej: 'registrar usuario'), No funcionales definen CÓMO lo hace (ej: 'la página debe cargar en < 2s').</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Funcionales son las funciones (ej: 'registrar'), No funcionales son las cualidades (ej: 'que sea rápido').</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Los funcionales son obligatorios y los no funcionales son opcionales y dependen del presupuesto.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Funcionales se escriben en código y los no funcionales en documentos de Word.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-             <!-- Pregunta 4 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">4. ¿Cómo influye un requisito de negocio en la toma de decisiones técnicas dentro de un proyecto?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Los requisitos de negocio son la razón de ser del proyecto. Guían todas las decisiones posteriores. Por ejemplo, si un requisito de negocio es 'expandir a un mercado global', las decisiones técnicas deben incluir soporte para múltiples idiomas, escalabilidad para manejar más usuarios y cumplimiento de regulaciones internacionales.">Guía las decisiones de arquitectura y tecnología para asegurar que la solución se alinee con los objetivos de la empresa.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Asegura que la solución técnica cumpla con las metas de la empresa.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Determina el presupuesto final y la fecha de entrega del proyecto.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Define los nombres de las variables y funciones en el código.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-            <!-- Pregunta 5 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">5. Describe las etapas del proceso de ingeniería de requisitos y explica cómo se relacionan entre sí.</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="El proceso de requisitos no es lineal, sino iterativo. La elicitación (obtener información) lleva al análisis, que puede revelar la necesidad de más elicitación. La especificación (documentar) se valida con el cliente, y esa validación puede generar nuevos requisitos o cambios, reiniciando el ciclo en una escala menor.">Elicitación (obtener), Análisis (entender), Especificación (documentar) y Validación (confirmar). Son iterativas y se retroalimentan.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Obtener, Entender, Documentar y Confirmar. Son etapas secuenciales que se hacen una tras otra.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Diseño, Codificación, Pruebas y Despliegue. Son las fases para construir el software.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Marketing, Ventas, Soporte y Mantenimiento. Son las fases del ciclo de vida de un producto.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-            
-            <!-- Pregunta 6 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">6. ¿Qué riesgos pueden surgir si no se realiza una adecuada gestión de cambios en los requisitos?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Esta opción incluye el término clave 'Scope Creep' o corrupción del alcance, que es el riesgo más conocido. Ocurre cuando se añaden nuevas funcionalidades sin control, lo que inevitablemente lleva a desviaciones en el presupuesto, los plazos y la calidad, resultando en la insatisfacción del cliente.">"Scope creep" (corrupción del alcance), aumento de costos, retrasos e insatisfacción del cliente.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Aumento de costos y retrasos en el cronograma del proyecto.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Problemas de compatibilidad con el hardware del servidor y los computadores.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Que el software tenga una interfaz gráfica muy atractiva y moderna.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-            <!-- Pregunta 7 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">7. ¿Qué técnicas de elicitación consideras más efectivas para proyectos con usuarios diversos? ¿Por qué?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="No existe una única técnica perfecta. La mejor estrategia es combinar varias para mitigar las debilidades de cada una. Las entrevistas son buenas para obtener detalles profundos, los talleres para negociar y lograr consenso entre diferentes roles, y los prototipos son excelentes para validar ideas visualmente con usuarios que no son técnicos.">Combinar Entrevistas (profundidad), Talleres (consenso) y Prototipos (visualización) para cubrir diferentes perfiles.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Realizar Entrevistas individuales y Talleres grupales para obtener la información necesaria.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Enviar un único cuestionario por correo electrónico a todos los involucrados.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Revisar el código fuente de las aplicaciones de la competencia.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-
-            <!-- Pregunta 8 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">8. ¿Cómo garantizarías que los requisitos recogidos reflejan realmente las necesidades de los usuarios?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="La validación es la clave. No basta con preguntar una vez; es un proceso continuo. Usar prototipos interactivos permite a los usuarios 'sentir' cómo funcionará el sistema. Las revisiones de documentos y las sesiones de feedback aseguran que la interpretación del equipo de desarrollo se alinea constantemente con la visión del usuario.">Mediante la validación constante con ellos, usando prototipos, revisiones y sesiones de feedback.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Preguntándoles a los usuarios si están de acuerdo con los documentos escritos.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Asumiendo que el analista de requisitos siempre entiende todo perfectamente la primera vez.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Realizando pruebas de estrés al servidor para asegurar que todo funcione bien.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-            
-            <!-- Pregunta 9 -->
-            <div class="question-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">9. ¿Qué estrategias utilizarías para detectar ambigüedades o contradicciones en los requisitos recopilados?</h3>
-                <div class="options-container space-y-3">
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-correct="true" data-explanation="Detectar ambigüedades requiere un enfoque proactivo y multifacético. Las revisiones por pares (peer reviews) aportan diferentes perspectivas. Los modelos visuales (como diagramas de flujo o UML) pueden revelar inconsistencias lógicas que son difíciles de ver en texto. Un glosario asegura que todos usen los mismos términos con el mismo significado.">Realizar revisiones formales en equipo (peer reviews), crear modelos visuales (diagramas) y definir un glosario de términos.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Leer los documentos cuidadosamente y hacer preguntas si algo no está claro.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Empezar a codificar inmediatamente para descubrir los problemas en la práctica.</button>
-                    <button class="option-btn w-full text-left p-3 border dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">Traducir los requisitos a otro idioma y luego de vuelta al original para ver si cambian.</button>
-                </div>
-                <div class="feedback mt-4 p-3 rounded-md text-sm" aria-live="polite"></div>
-            </div>
-            
+        <main id="quiz-container">
+            <!-- La pregunta actual se insertará aquí -->
         </main>
 
         <footer class="mt-8 text-center">
-            <button id="reset-btn"
-                class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Intentar de Nuevo
-            </button>
+            <div id="progress-container" class="text-gray-400 mb-4"></div>
+            <button id="next-btn" class="navigation-button text-white font-bold py-2 px-6 rounded-lg">Siguiente</button>
+            <button id="restart-btn" class="navigation-button text-white font-bold py-2 px-6 rounded-lg">Reiniciar
+                Quiz</button>
         </footer>
     </div>
 
-    <!-- Tu Lógica Personalizada -->
-    <script src="javascript.js" defer></script>
+    <script>
+        const quizData = {
+            "questions": [
+                { "question": "Un equipo define un requisito como 'una descripción de una función del software'. ¿Qué parte crucial de la definición de un requisito falta en esta afirmación para asegurar el éxito del proyecto?", "hint": "Un requisito no es solo lo que hace el software, sino por qué lo hace.", "answerOptions": [{ "text": "El lenguaje de programación a utilizar.", "isCorrect": false, "rationale": "La tecnología es una decisión de implementación, no parte de la definición fundamental de un requisito." }, { "text": "La condición o capacidad para satisfacer una necesidad del negocio o del usuario.", "isCorrect": true, "rationale": "Esta es la esencia; un requisito debe estar directamente vinculado a resolver un problema o a alcanzar un objetivo de negocio para ser valioso." }, { "text": "El costo estimado de la función.", "isCorrect": false, "rationale": "El costo es una consideración del proyecto, pero no forma parte de la definición conceptual de lo que es un requisito." }, { "text": "El nombre del programador asignado.", "isCorrect": false, "rationale": "La asignación de tareas es parte de la gestión del proyecto, no de la definición del requisito en sí." }] },
+                { "question": "Un gerente impaciente le dice al equipo: 'Dejen de perder tiempo en documentos y empiecen a codificar ya'. ¿Cuál es el argumento más fuerte contra esta orden?", "hint": "Piensa en la analogía de construir una casa. ¿Qué pasaría si los constructores empiezan sin tener los planos finales?", "answerOptions": [{ "text": "La codificación sin requisitos claros es más lenta porque los programadores son más indecisos.", "isCorrect": false, "rationale": "Aunque la indecisión puede ocurrir, el problema principal es más tangible y costoso que solo la velocidad de codificación inicial." }, { "text": "Se corre el riesgo de construir un producto técnicamente perfecto pero completamente inútil para el cliente, desperdiciando toda la inversión.", "isCorrect": true, "rationale": "Este es el riesgo fundamental: el esfuerzo de desarrollo se puede desperdiciar por completo si el resultado final no resuelve el problema correcto." }, { "text": "Los documentos de requisitos son necesarios para cumplir con las auditorías de la empresa.", "isCorrect": false, "rationale": "Si bien puede ser cierto, el argumento más fuerte se relaciona con el éxito del producto, no con la burocracia interna." }, { "text": "Es imposible escribir código sin tener un documento de requisitos.", "isCorrect": false, "rationale": "Es posible escribir código, el problema es que probablemente será el código incorrecto." }] },
+                { "question": "Un sistema de reservas de hotel tiene un requisito que dice: 'El sistema debe mostrar hoteles disponibles en un mapa'. Otro requisito dice: 'El mapa debe cargar en menos de 3 segundos con 100 hoteles visibles'. ¿Cómo se clasifican estos dos requisitos, respectivamente?", "hint": "Uno describe una acción (el 'qué') y el otro una cualidad (el 'cómo').", "answerOptions": [{ "text": "Ambos son funcionales.", "isCorrect": false, "rationale": "El segundo requisito no describe una función, sino una característica de rendimiento del sistema." }, { "text": "El primero es no funcional y el segundo es funcional.", "isCorrect": false, "rationale": "La clasificación está invertida. Mostrar un mapa es una función, mientras que la velocidad de carga es una cualidad no funcional." }, { "text": "Ambos son no funcionales.", "isCorrect": false, "rationale": "El primer requisito describe una acción específica que el sistema debe realizar, lo cual es la definición de un requisito funcional." }, { "text": "El primero es funcional y el segundo es no funcional.", "isCorrect": true, "rationale": "'Mostrar un mapa' es una función (qué hace), mientras que 'cargar en menos de 3 segundos' es una cualidad de rendimiento (cómo lo hace)." }] },
+                { "question": "El objetivo de negocio de una empresa es 'reducir el tiempo de atención de llamadas en el call center en un 25%'. ¿Cómo influiría este objetivo en las decisiones técnicas del software a construir?", "hint": "Piensa en qué tipo de funcionalidades ayudarían a un agente de call center a ser más rápido y eficiente.", "answerOptions": [{ "text": "Se priorizará una interfaz de usuario con un diseño visualmente atractivo y muchas animaciones.", "isCorrect": false, "rationale": "Un diseño atractivo no necesariamente hace que el proceso sea más rápido; de hecho, las animaciones podrían ralentizarlo." }, { "text": "Se elegirá una arquitectura que priorice la integración rápida con la base de datos de clientes y la automatización de respuestas.", "isCorrect": true, "rationale": "Para reducir el tiempo, es crucial que el software proporcione información al instante y automatice tareas repetitivas, lo que es una decisión técnica directa." }, { "text": "Se optará por la tecnología más barata disponible, sin importar el rendimiento.", "isCorrect": false, "rationale": "La tecnología barata pero lenta sería contraproducente para el objetivo de reducir el tiempo de atención." }, { "text": "El equipo se centrará en añadir tantas funcionalidades como sea posible.", "isCorrect": false, "rationale": "Añadir más funciones podría complicar la interfaz y ralentizar a los agentes, yendo en contra del objetivo principal." }] },
+                { "question": "Un analista de requisitos acaba de terminar una serie de entrevistas (elicitación) y ha documentado todo (especificación). Ahora, le presenta los documentos al cliente para su aprobación (validación). El cliente no está de acuerdo con varios puntos. ¿Qué demuestra esta situación sobre el proceso de ingeniería de requisitos?", "hint": "El proceso no es una línea recta que se ejecuta una sola vez.", "answerOptions": [{ "text": "Que el proceso falló y debe detenerse.", "isCorrect": false, "rationale": "Esto no es una falla, sino una parte normal y esperada del proceso." }, { "text": "Que el analista es incompetente en la elicitación.", "isCorrect": false, "rationale": "Los malentendidos son comunes; el propósito de la validación es precisamente descubrirlos y corregirlos." }, { "text": "Que el proceso es iterativo y la validación a menudo conduce a un nuevo ciclo de análisis y refinamiento.", "isCorrect": true, "rationale": "Esta retroalimentación es valiosa y reinicia el ciclo: se debe analizar el desacuerdo, refinar los requisitos y volver a validar." }, { "text": "Que la especificación debe ser ignorada y se debe pasar directamente a la codificación.", "isCorrect": false, "rationale": "Ignorar la retroalimentación del cliente es la receta para construir el producto equivocado." }] },
+                { "question": "Un proyecto de software comienza con 5 módulos definidos. A mitad del desarrollo, los stakeholders han añadido 'pequeñas' funcionalidades que han resultado en 3 módulos adicionales no planificados, sin ajustar el presupuesto ni la fecha de entrega. ¿Qué riesgo se ha materializado?", "hint": "Este término describe el crecimiento gradual y no controlado del proyecto más allá de sus límites originales.", "answerOptions": [{ "text": "Análisis de viabilidad deficiente.", "isCorrect": false, "rationale": "Aunque relacionado, el problema aquí no es la viabilidad inicial, sino la falta de control sobre los cambios durante el proyecto." }, { "text": "Scope creep (corrupción del alcance).", "isCorrect": true, "rationale": "Esto es un ejemplo clásico de 'scope creep', donde el alcance se expande sin un control formal, poniendo en peligro el cronograma y el presupuesto." }, { "text": "Falta de herramientas de apoyo.", "isCorrect": false, "rationale": "Las herramientas pueden ayudar a gestionar el alcance, pero el problema fundamental es la falta de un proceso de gestión de cambios." }, { "text": "Mala especificación de requisitos.", "isCorrect": false, "rationale": "La especificación inicial podría haber sido buena, pero el problema surgió por la gestión inadecuada de los cambios posteriores." }] },
+                { "question": "Se necesita definir los requisitos para un nuevo sistema hospitalario que será utilizado por médicos, enfermeras, administradores y personal de farmacia. ¿Qué técnica de elicitación es la más adecuada para gestionar esta diversidad y negociar un conjunto de requisitos coherente?", "hint": "Busca la técnica que promueva la colaboración y la negociación en tiempo real entre múltiples grupos de interés.", "answerOptions": [{ "text": "Entrevistas individuales con cada persona.", "isCorrect": false, "rationale": "Las entrevistas individuales son buenas para obtener detalles, pero no resuelven los conflictos entre los diferentes roles." }, { "text": "Talleres (workshops) con representantes de cada grupo.", "isCorrect": true, "rationale": "Los talleres son ideales para esto, ya que reúnen a todos los puntos de vista en una sala para discutir, negociar y llegar a un consenso." }, { "text": "Encuestas enviadas por correo electrónico.", "isCorrect": false, "rationale": "Las encuestas son impersonales y no permiten la discusión ni la negociación necesarias para resolver conflictos de interés." }, { "text": "Observación del trabajo diario en el hospital.", "isCorrect": false, "rationale": "La observación es útil para entender los procesos existentes, pero no ayuda a definir las características de un sistema futuro ni a negociar prioridades." }] },
+                { "question": "Un usuario le dice a un analista: 'Necesito que el sistema sea más rápido'. Para garantizar que el requisito final refleje la necesidad real, ¿cuál es la mejor acción que el analista puede tomar?", "hint": "Es necesario convertir una declaración subjetiva en algo concreto y observable.", "answerOptions": [{ "text": "Documentar el requisito como 'el sistema debe ser más rápido'.", "isCorrect": false, "rationale": "Esto solo pospone el problema, ya que 'rápido' sigue siendo ambiguo y no se puede medir." }, { "text": "Preguntar al usuario: '¿Qué tarea específica es lenta y cómo afecta a tu trabajo? ¿Puedes mostrarme?'.", "isCorrect": true, "rationale": "Esta pregunta busca entender el contexto y el impacto, lo que permite identificar el problema real y luego definir un requisito medible." }, { "text": "Decirle al equipo de desarrollo que optimice todo el sistema.", "isCorrect": false, "rationale": "Optimizar 'todo' es ineficiente y costoso. Es crucial identificar dónde está el problema de rendimiento real." }, { "text": "Ignorar la solicitud porque es demasiado vaga.", "isCorrect": false, "rationale": "Ignorar la retroalimentación del usuario es una mala práctica; las declaraciones vagas a menudo esconden problemas reales que deben ser investigados." }] },
+                { "question": "Un documento de requisitos contiene dos afirmaciones: 1) 'Para la seguridad, el sistema cerrará la sesión del usuario después de 5 minutos de inactividad'. 2) 'Para la conveniencia del usuario, la sesión debe permanecer activa durante toda la jornada laboral (8 horas)'. ¿Qué estrategia ayudaría a detectar este problema?", "hint": "Esta estrategia se enfoca en revisar cuidadosamente los requisitos para encontrar inconsistencias lógicas.", "answerOptions": [{ "text": "Elicitación de requisitos.", "isCorrect": false, "rationale": "La elicitación es la recolección de requisitos; este problema surge después, al analizarlos." }, { "text": "Creación de modelos visuales o revisiones formales.", "isCorrect": true, "rationale": "Al modelar el flujo de la sesión de un usuario o al revisar formalmente los requisitos de seguridad y usabilidad juntos, esta contradicción se haría evidente." }, { "text": "Gestión de cambios.", "isCorrect": false, "rationale": "La gestión de cambios se ocupa de las nuevas solicitudes, no de los conflictos en los requisitos ya recopilados." }, { "text": "Priorización de funcionalidades.", "isCorrect": false, "rationale": "La priorización ayuda a decidir qué construir primero, pero no resuelve las contradicciones inherentes entre los requisitos." }] },
+                { "question": "Para un sistema grande y complejo, ¿cuál es la forma más efectiva de organizar los requisitos para que tanto los desarrolladores como los gerentes de producto puedan entenderlos fácilmente?", "hint": "Piensa en una estructura que agrupe los requisitos de manera lógica y que también indique qué es lo más importante.", "answerOptions": [{ "text": "En un único documento de texto largo, ordenado alfabéticamente.", "isCorrect": false, "rationale": "El orden alfabético no tiene relación con la lógica del sistema y sería muy difícil de entender." }, { "text": "Agrupándolos por módulo de negocio o funcionalidad y priorizándolos según el valor que aportan.", "isCorrect": true, "rationale": "Esta estructura es lógica (agrupación por función) y estratégica (priorización por valor), lo que la hace comprensible y útil para todos los roles." }, { "text": "Escribiendo cada requisito en una tarjeta de notas y pegándolas en una pared.", "isCorrect": false, "rationale": "Aunque es una técnica útil para el brainstorming, no es un método de organización sostenible para la documentación formal de un proyecto grande." }, { "text": "Separando los requisitos en documentos para técnicos y documentos para no técnicos.", "isCorrect": false, "rationale": "Esto puede crear silos de información y dificultar un entendimiento compartido. Es mejor tener una fuente única pero bien organizada." }] },
+                { "question": "Un equipo ágil documenta un requisito así: 'Como comprador, quiero ver el historial de mis pedidos para poder hacer un seguimiento de mis compras pasadas'. ¿Cuál es la principal ventaja de este formato de 'Historia de Usuario'?", "hint": "Este formato se centra en tres partes: el rol, la acción y, lo más importante, el objetivo final.", "answerOptions": [{ "text": "Es muy detallado técnicamente y no deja lugar a dudas.", "isCorrect": false, "rationale": "Al contrario, las historias de usuario son intencionadamente breves para fomentar la conversación, no para ser una especificación técnica exhaustiva." }, { "text": "Se enfoca en el valor para el usuario y el 'porqué' de la funcionalidad, no solo en el 'qué'.", "isCorrect": true, "rationale": "La cláusula 'para poder...' obliga al equipo a entender el propósito de la función, lo que conduce a un mejor diseño y priorización." }, { "text": "Es un formato legalmente vinculante en un contrato.", "isCorrect": false, "rationale": "Las historias de usuario son herramientas de comunicación y planificación, no están diseñadas para ser documentos contractuales formales." }, { "text": "Solo puede ser escrito por el usuario final, garantizando su exactitud.", "isCorrect": false, "rationale": "Cualquier miembro del equipo (como el Product Owner) puede escribir historias de usuario, siempre que representen una necesidad real del usuario." }] },
+                { "question": "Un documento de especificación describe un complejo formulario de registro de 15 campos. El equipo crea una versión interactiva del formulario para que los usuarios puedan probarlo antes de escribir el código final. Al probarlo, los usuarios se quejan de que es demasiado largo y confuso. ¿Qué ha logrado el prototipo en este caso?", "hint": "El prototipo permitió descubrir un problema que no era obvio en el documento de texto.", "answerOptions": [{ "text": "Ha validado que la especificación es correcta.", "isCorrect": false, "rationale": "Al contrario, ha demostrado que la especificación, aunque técnicamente completa, conducía a una mala experiencia de usuario." }, { "text": "Ha revelado problemas de usabilidad y de flujo de trabajo que eran invisibles en el documento abstracto.", "isCorrect": true, "rationale": "Esto demuestra el poder de los prototipos: convierten un concepto en una experiencia, permitiendo obtener retroalimentación mucho más rica y precisa." }, { "text": "Ha reemplazado la necesidad de escribir la especificación.", "isCorrect": false, "rationale": "El prototipo complementa la especificación, no la reemplaza. Ambos son artefactos valiosos." }, { "text": "Ha confirmado el costo y el tiempo de desarrollo del formulario.", "isCorrect": false, "rationale": "Un prototipo no se utiliza para estimar el esfuerzo de desarrollo, sino para validar el diseño y la funcionalidad." }] },
+                { "question": "Antes de comenzar a programar, un analista de negocio guía a un grupo de stakeholders a través de un documento de requisitos, explicando cada sección y respondiendo preguntas, mientras un escriba toma notas de los cambios acordados. ¿Qué método de validación se está utilizando?", "hint": "Este método es como una visita guiada a través del documento de requisitos.", "answerOptions": [{ "text": "Prototipado", "isCorrect": false, "rationale": "No se está utilizando un modelo interactivo del sistema, sino un documento de texto." }, { "text": "Revisión formal o recorrido (walkthrough)", "isCorrect": true, "rationale": "Un recorrido es una reunión estructurada donde el autor de un documento lo presenta a los stakeholders para obtener retroalimentación y aprobación." }, { "text": "Pruebas de aceptación del usuario (UAT)", "isCorrect": false, "rationale": "Las UAT se realizan sobre el software funcional, no sobre el documento de requisitos." }, { "text": "Elicitación", "isCorrect": false, "rationale": "La elicitación es para obtener los requisitos; esta actividad es para confirmar que los requisitos obtenidos son correctos." }] },
+                { "question": "En una reunión de validación de requisitos, el equipo de marketing insiste en que el botón de registro debe ser grande y rojo, mientras que el equipo de diseño argumenta que debe ser sutil y azul para mantener la consistencia de la marca. ¿Cuál es el primer paso que debe dar el moderador de la reunión?", "hint": "Antes de buscar una solución, es crucial entender la motivación detrás de cada petición.", "answerOptions": [{ "text": "Poner la decisión a votación entre todos los asistentes.", "isCorrect": false, "rationale": "La votación puede no llevar a la mejor decisión, sino a la más popular, ignorando los objetivos estratégicos." }, { "text": "Facilitar una discusión para entender el 'porqué' de cada propuesta, conectándolas con los objetivos del negocio.", "isCorrect": true, "rationale": "Entender la motivación (marketing quiere visibilidad, diseño quiere consistencia) es el primer paso para encontrar una solución que satisfaga ambos objetivos." }, { "text": "Elegir la opción del equipo con más autoridad en la empresa.", "isCorrect": false, "rationale": "Esto puede resolver el conflicto a corto plazo, pero podría llevar a una mala decisión de producto." }, { "text": "Decirle a ambos equipos que implementará las dos opciones y realizará una prueba A/B.", "isCorrect": false, "rationale": "Si bien es una posible solución, el primer paso debe ser entender el problema, no saltar directamente a una implementación." }] },
+                { "question": "Un auditor de calidad necesita verificar por qué se implementó una función específica en el software. Usando la herramienta de gestión, puede ver el objetivo de negocio original que la motivó, los casos de prueba que la validan y el código que la implementa. ¿Qué concepto de gestión de requisitos permite esto?", "hint": "Este concepto se refiere a la capacidad de crear una 'cadena de evidencia' que conecta todos los artefactos del proyecto.", "answerOptions": [{ "text": "Gestión de cambios", "isCorrect": false, "rationale": "La gestión de cambios se ocupa de las nuevas solicitudes, no de las conexiones entre los artefactos existentes." }, { "text": "Trazabilidad de requisitos", "isCorrect": true, "rationale": "La trazabilidad es precisamente la capacidad de seguir la vida de un requisito desde su origen hasta su implementación y prueba, creando un rastro auditable." }, { "text": "Priorización de requisitos", "isCorrect": false, "rationale": "La priorización ayuda a decidir el orden de implementación, pero no crea los vínculos entre los diferentes artefactos." }, { "text": "Validación de requisitos", "isCorrect": false, "rationale": "La validación confirma que el requisito es correcto, pero la trazabilidad es lo que mantiene el vínculo a lo largo del tiempo." }] },
+                { "question": "Un cliente solicita añadir una nueva funcionalidad 'urgente' a la mitad de un sprint de desarrollo. ¿Cuál es la forma más profesional de gestionar esta solicitud sin poner en riesgo el cronograma?", "hint": "Las solicitudes de cambio no deben ser aceptadas o rechazadas impulsivamente, sino evaluadas de forma estructurada.", "answerOptions": [{ "text": "Aceptar la solicitud inmediatamente para mantener al cliente contento.", "isCorrect": false, "rationale": "Esto conduce al 'scope creep' y pone en riesgo la entrega del trabajo ya comprometido." }, { "text": "Rechazar la solicitud de plano porque el alcance ya está cerrado.", "isCorrect": false, "rationale": "Ser demasiado rígido puede ignorar una necesidad de negocio genuina y dañar la relación con el cliente." }, { "text": "Registrar la solicitud, evaluar su impacto en el costo y el cronograma, y presentar los resultados al cliente para que tome una decisión informada.", "isCorrect": true, "rationale": "Este es un proceso de control de cambios formal. Permite tomar decisiones basadas en datos y no en la urgencia percibida." }, { "text": "Decirle al cliente que lo añadirán si sobra tiempo al final del sprint.", "isCorrect": false, "rationale": "Esto crea falsas expectativas y carece de la evaluación formal necesaria para entender el verdadero costo del cambio." }] },
+                { "question": "Un equipo de desarrollo está distribuido en tres países diferentes. ¿Qué característica es más crucial en una herramienta de gestión de requisitos para asegurar que todos trabajen con la misma información?", "hint": "Piensa en el problema que surge cuando varias personas editan copias locales de un documento al mismo tiempo.", "answerOptions": [{ "text": "La capacidad de exportar a PDF.", "isCorrect": false, "rationale": "Exportar a PDF crea copias estáticas, lo que empeora el problema de la sincronización de la información." }, { "text": "Un repositorio centralizado y basado en la web.", "isCorrect": true, "rationale": "Un repositorio centralizado asegura que todos, sin importar su ubicación, estén viendo y editando la misma 'única fuente de verdad', eliminando conflictos de versiones." }, { "text": "Una interfaz de usuario personalizable.", "isCorrect": false, "rationale": "Aunque es una característica agradable, no es tan fundamental como asegurar que la información subyacente sea consistente para todos." }, { "text": "Integración con el correo electrónico.", "isCorrect": false, "rationale": "Las notificaciones son útiles, pero no resuelven el problema central de tener una única fuente de información compartida." }] },
+                { "question": "Al usar una herramienta como Jira, un equipo nota que, aunque todas las tareas están registradas, nadie sabe el estado real del proyecto porque los desarrolladores no actualizan los estados de sus tareas. ¿Qué desafío común de las herramientas de gestión de requisitos ilustra esta situación?", "hint": "La herramienta es tan buena como la forma en que el equipo la utiliza.", "answerOptions": [{ "text": "Las herramientas son demasiado caras.", "isCorrect": false, "rationale": "El costo no es el problema aquí; es la forma en que se está utilizando la herramienta." }, { "text": "Las herramientas requieren una disciplina de equipo constante para ser efectivas; no son una solución mágica.", "isCorrect": true, "rationale": "Este es un desafío clave: la herramienta facilita un proceso, pero no puede forzar la colaboración ni la responsabilidad. Su valor depende de la disciplina del equipo." }, { "text": "Las herramientas de software tienen demasiados errores.", "isCorrect": false, "rationale": "El problema no es un error de software en la herramienta, sino un problema en el proceso humano." }, { "text": "Las herramientas ágiles no son buenas para el seguimiento de requisitos.", "isCorrect": false, "rationale": "Herramientas como Jira son excelentes para el seguimiento, pero solo si el equipo las mantiene actualizadas." }] },
+                { "question": "Un desarrollador tiene una duda técnica sobre un requisito, pero en lugar de asumir la respuesta, se une a la reunión de revisión semanal con el usuario final para clarificarla. ¿Qué práctica se está fomentando?", "hint": "Esta acción evita que la información se pierda o se malinterprete al pasar por intermediarios.", "answerOptions": [{ "text": "Comunicación indirecta a través de tickets.", "isCorrect": false, "rationale": "Al contrario, el desarrollador está optando por una comunicación directa en lugar de depender únicamente de la documentación escrita." }, { "text": "Comunicación directa y efectiva entre el equipo técnico y los stakeholders.", "isCorrect": true, "rationale": "Fomentar canales directos reduce los malentendidos y acelera la resolución de problemas, asegurando que el equipo construya lo correcto." }, { "text": "Una estricta separación de roles donde los desarrolladores no hablan con los clientes.", "isCorrect": false, "rationale": "Esta práctica rompe con la idea de silos y promovemos la colaboración directa." }, { "text": "La documentación exhaustiva como única fuente de verdad.", "isCorrect": false, "rationale": "El desarrollador está reconociendo que la documentación a veces necesita ser complementada con una conversación para aclarar ambigüedades." }] },
+                { "question": "Al diseñar una aplicación para niños, el equipo decide no recopilar ninguna información personal identificable y añade un requisito que dice: 'El sistema no almacenará nombres, correos electrónicos ni fechas de nacimiento'. ¿Qué valor ético se está priorizando?", "hint": "Este valor se centra en la protección de la información sensible de los usuarios.", "answerOptions": [{ "text": "Accesibilidad", "isCorrect": false, "rationale": "La accesibilidad se centraría en hacer la aplicación usable para niños con diferentes capacidades." }, { "text": "Privacidad", "isCorrect": true, "rationale": "Este requisito es una decisión de diseño explícita para proteger la privacidad de sus usuarios, que en este caso son un grupo vulnerable." }, { "text": "Equidad", "isCorrect": false, "rationale": "La equidad se enfocaría en asegurar que la aplicación no contenga sesgos y sea justa para todos los niños." }, { "text": "Empatía", "isCorrect": false, "rationale": "Si bien la decisión nace de la empatía, el valor ético que se implementa directamente a través del requisito es la privacidad." }] },
+                { "question": "Un cliente describe un problema complejo y el analista de requisitos le responde: 'Entonces, si he entendido bien, el problema principal es X y el impacto que tiene es Y. ¿Es correcto?'. ¿Qué técnica de comprensión de necesidades se está utilizando?", "hint": "Esta técnica implica repetir lo que se escuchó con las propias palabras para asegurar que no haya malentendidos.", "answerOptions": [{ "text": "Escucha activa y parafraseo.", "isCorrect": true, "rationale": "El analista está demostrando que escuchó atentamente y está verificando su comprensión al reformular el problema, lo cual es clave para evitar suposiciones erróneas." }, { "text": "Análisis de la causa raíz.", "isCorrect": false, "rationale": "El análisis de la causa raíz buscaría el origen fundamental del problema (ej. 'los 5 porqués'), no solo la confirmación de su comprensión." }, { "text": "Observación.", "isCorrect": false, "rationale": "La observación implicaría ver al cliente trabajar, no solo conversar con él." }, { "text": "Lluvia de ideas (brainstorming).", "isCorrect": false, "rationale": "La lluvia de ideas se utiliza para generar soluciones, no para comprender el problema inicial." }] },
+                { "question": "Un cliente expresa la necesidad de 'un mejor sistema de reportes'. ¿Cuál es el siguiente paso más efectivo para traducir esta necesidad en un requisito funcional claro?", "hint": "Una necesidad general debe desglosarse en acciones específicas y resultados concretos.", "answerOptions": [{ "text": "Decirle al equipo que construya un 'mejor' sistema de reportes.", "isCorrect": false, "rationale": "Esto transfiere la ambigüedad al equipo de desarrollo, que no tiene el contexto de negocio para definir qué significa 'mejor'." }, { "text": "Hacer preguntas de seguimiento como: '¿Qué información específica necesita en los reportes?', '¿Quién los usará?' y '¿Qué decisiones tomarán con ellos?'.", "isCorrect": true, "rationale": "Estas preguntas ayudan a descomponer la necesidad vaga en requisitos funcionales específicos y con propósito (ej. 'generar un reporte de ventas diarias por región')." }, { "text": "Buscar en Google 'mejores sistemas de reportes' y copiar sus características.", "isCorrect": false, "rationale": "Las características de otros sistemas pueden no ser relevantes para las necesidades específicas de este cliente." }, { "text": "Crear un prototipo genérico de un tablero de control.", "isCorrect": false, "rationale": "Sin entender primero la necesidad específica, es probable que el prototipo no sea útil y no resuelva el problema real." }] },
+                { "question": "Después de recopilar una larga lista de requisitos, ¿cuál sería el primer paso lógico en el análisis efectivo de los mismos?", "hint": "Antes de poder analizar en profundidad, necesitas poner orden en el caos.", "answerOptions": [{ "text": "Escribir el código para los requisitos más fáciles.", "isCorrect": false, "rationale": "Empezar a codificar antes de un análisis completo es arriesgado y puede llevar a reprocesos." }, { "text": "Validar todos los requisitos con el cliente inmediatamente.", "isCorrect": false, "rationale": "Es mejor organizar y analizar los requisitos primero para presentar al cliente una propuesta coherente, en lugar de una lista desordenada." }, { "text": "Clasificarlos en categorías como funcionales, no funcionales y de negocio.", "isCorrect": true, "rationale": "La clasificación es un primer paso fundamental para organizar la información, facilitar la comprensión y preparar el terreno para un análisis más profundo." }, { "text": "Estimar el tiempo de desarrollo de cada requisito.", "isCorrect": false, "rationale": "La estimación debe realizarse después de que los requisitos hayan sido analizados y clarificados, no antes." }] },
+                { "question": "Para validar que un conjunto de requisitos es completo, un analista crea una tabla que en las filas tiene los objetivos de negocio y en las columnas los requisitos funcionales, marcando qué requisito ayuda a cumplir qué objetivo. ¿Qué está utilizando y para qué?", "hint": "Esta herramienta ayuda a visualizar las conexiones y a asegurar que no haya metas de negocio sin una función que las respalde.", "answerOptions": [{ "text": "Un diagrama de Gantt para planificar el proyecto.", "isCorrect": false, "rationale": "Un diagrama de Gantt se utiliza para la programación de tareas en el tiempo, no para verificar la cobertura de los requisitos." }, { "text": "Una matriz de trazabilidad para asegurar que todos los objetivos de negocio están cubiertos.", "isCorrect": true, "rationale": "Esta matriz es la herramienta perfecta para verificar la completitud, ya que expone visualmente si algún objetivo de negocio ha quedado huérfano (sin requisitos que lo soporten)." }, { "text": "Un prototipo para validar la interfaz de usuario.", "isCorrect": false, "rationale": "Un prototipo valida la usabilidad y el flujo, pero no garantiza que se hayan cubierto todos los objetivos estratégicos del negocio." }, { "text": "Un glosario de términos para evitar ambigüedades.", "isCorrect": false, "rationale": "Un glosario asegura que todos entiendan los términos de la misma manera, pero no verifica si el conjunto de requisitos es completo." }] },
+                { "question": "De las siguientes opciones, ¿cuál es el MEJOR ejemplo de un objetivo de proyecto que cumple con los criterios SMART?", "hint": "Busca el objetivo que sea específico, medible, alcanzable, relevante y con un plazo definido.", "answerOptions": [{ "text": "Mejorar la satisfacción del cliente.", "isCorrect": false, "rationale": "No es medible ni tiene un plazo. ¿Cómo se mide 'mejorar' y para cuándo?" }, { "text": "Lanzar el nuevo módulo de inventario este año.", "isCorrect": false, "rationale": "Es específico y tiene un plazo, pero no es medible. ¿Cuál es el criterio de éxito del lanzamiento?" }, { "text": "Reducir los errores en el procesamiento de pedidos en un 90% para el final del segundo trimestre, implementando un sistema de validación automática.", "isCorrect": true, "rationale": "Es Específico (sistema de validación), Medible (reducir errores 90%), Alcanzable (asumido), Relevante (mejora la operación) y con Plazo (fin del Q2)." }, { "text": "Hacer que el sitio web sea más rápido y moderno.", "isCorrect": false, "rationale": "Es vago, no es medible ('rápido', 'moderno' son subjetivos) y no tiene un plazo." }] },
+                { "question": "Un gerente de proyecto dice: 'Nuestro objetivo es aumentar las ventas. El alcance es construir un nuevo carrito de compras. Tenemos un presupuesto de $50,000 y 3 meses de plazo'. ¿Qué describe mejor esta declaración?", "hint": "Esta declaración conecta el 'porqué' con el 'qué', el 'cuánto' y el 'cuándo'.", "answerOptions": [{ "text": "Un análisis de riesgos del proyecto.", "isCorrect": false, "rationale": "No se mencionan riesgos, solo los componentes fundamentales de la planificación del proyecto." }, { "text": "La relación entre el objetivo (el porqué), el alcance (el qué), y las restricciones de presupuesto y tiempo.", "isCorrect": true, "rationale": "Esta es una verbalización clara de cómo el objetivo de negocio guía la definición del alcance dentro de las limitaciones prácticas del proyecto." }, { "text": "Un plan de comunicación detallado.", "isCorrect": false, "rationale": "No se describe cómo se comunicarán los equipos, sino qué es lo que van a construir." }, { "text": "Una especificación de requisitos funcionales.", "isCorrect": false, "rationale": "Es una declaración de alto nivel; una especificación de requisitos funcionales detallaría cómo debe funcionar el carrito de compras." }] },
+                { "question": "Un equipo evalúa un proyecto para construir un sistema de reconocimiento facial. Concluyen que, aunque tienen el presupuesto y el equipo técnico, la ley de protección de datos de su país prohíbe la recolección de datos biométricos sin consentimiento explícito, lo que hace el proyecto inviable. ¿Qué aspecto de la factibilidad ha fallado?", "hint": "Este aspecto de la viabilidad se enfoca en si el proyecto cumple con las leyes y regulaciones.", "answerOptions": [{ "text": "Factibilidad Técnica", "isCorrect": false, "rationale": "El equipo determinó que técnicamente sí era posible construir el sistema." }, { "text": "Factibilidad Económica", "isCorrect": false, "rationale": "El presupuesto estaba disponible, por lo que el proyecto era económicamente viable desde ese punto de vista." }, { "text": "Factibilidad Legal/Regulatoria", "isCorrect": true, "rationale": "La viabilidad legal es un componente clave. Si el proyecto infringe la ley, es inviable sin importar los otros factores." }, { "text": "Factibilidad Operativa", "isCorrect": false, "rationale": "La factibilidad operativa se centraría en si la empresa podría usar el sistema, pero el problema aquí es que ni siquiera se puede construir legalmente." }] },
+                { "question": "Un banco está considerando usar una nueva tecnología de blockchain para su sistema de transferencias. Aunque la tecnología promete mayor seguridad (estado del arte), ningún miembro del equipo tiene experiencia en ella. ¿Cuál es el principal riesgo de adoptar esta nueva tecnología?", "hint": "Adoptar lo último y lo mejor conlleva un balance entre la innovación y la capacidad real del equipo.", "answerOptions": [{ "text": "El sistema será obsoleto en cuanto se lance.", "isCorrect": false, "rationale": "Al contrario, el riesgo es que la tecnología sea demasiado nueva y no esté madura, no que sea obsoleta." }, { "text": "El proyecto tendrá un costo menor debido a la eficiencia de la nueva tecnología.", "isCorrect": false, "rationale": "Es más probable que el costo aumente debido a la curva de aprendizaje, los errores y la necesidad de contratar expertos." }, { "text": "La falta de experiencia del equipo puede llevar a una implementación deficiente, retrasos significativos y problemas de seguridad imprevistos.", "isCorrect": true, "rationale": "Este es el principal riesgo: la brecha entre el potencial de la tecnología y la capacidad del equipo para implementarla correctamente." }, { "text": "El banco perderá su ventaja competitiva.", "isCorrect": false, "rationale": "El objetivo de usar una tecnología de punta es precisamente ganar una ventaja competitiva, aunque el riesgo de una mala implementación puede anularla." }] },
+                { "question": "Un proyecto para una agencia gubernamental tiene la siguiente restricción: 'El sistema debe cumplir con la Ley de Accesibilidad Web WCAG 2.1 Nivel AA'. ¿Cómo debe abordar el equipo esta restricción?", "hint": "Este tipo de restricciones no son negociables y deben ser consideradas desde el principio.", "answerOptions": [{ "text": "Considerarla como una sugerencia y no como una obligación.", "isCorrect": false, "rationale": "Las restricciones legales o regulatorias son mandatos, no sugerencias." }, { "text": "Identificarla como una restricción legal, documentarla y asegurar que todas las decisiones de diseño y desarrollo la tengan en cuenta desde el inicio.", "isCorrect": true, "rationale": "Las restricciones definen los límites del proyecto. Deben ser identificadas tempranamente e integradas en todo el ciclo de vida del desarrollo." }, { "text": "Dejar la accesibilidad para el final del proyecto si sobra tiempo.", "isCorrect": false, "rationale": "Tratar la accesibilidad como una ocurrencia tardía es mucho más costoso y menos efectivo que diseñarla desde el principio." }, { "text": "Pedir al cliente que elimine la restricción para simplificar el proyecto.", "isCorrect": false, "rationale": "No se puede pedir a un cliente que ignore una obligación legal." }] },
+                { "question": "Un equipo de desarrollo de una startup tiene solo dos meses para lanzar la primera versión de su aplicación. ¿Qué estrategia de priorización sería más efectiva para decidir qué construir?", "hint": "En situaciones de tiempo y recursos muy limitados, es crucial diferenciar entre lo absolutamente esencial y lo que es simplemente deseable.", "answerOptions": [{ "text": "Construir primero las funcionalidades que pidan los inversores.", "isCorrect": false, "rationale": "Aunque la opinión de los inversores es importante, las funcionalidades deben priorizarse por el valor que aportan al usuario final." }, { "text": "Usar la técnica MoSCoW para clasificar las funcionalidades en 'Must have' (esencial), 'Should have' (importante) y 'Could have' (deseable), y enfocarse solo en las 'Must have'.", "isCorrect": true, "rationale": "MoSCoW es ideal para situaciones con restricciones fuertes, ya que obliga al equipo a tomar decisiones difíciles sobre lo que es verdaderamente indispensable para el lanzamiento." }, { "text": "Implementar las funcionalidades en el orden en que fueron documentadas.", "isCorrect": false, "rationale": "El orden de la documentación no tiene por qué corresponder a la prioridad de negocio." }, { "text": "Dejar que cada desarrollador elija en qué funcionalidad quiere trabajar.", "isCorrect": false, "rationale": "Esto llevaría a un desarrollo caótico y no alineado con los objetivos estratégicos del producto." }] },
+                { "question": "Una empresa va a implementar un nuevo software de contabilidad. ¿Cuál es el principal factor a considerar al evaluar el impacto del proyecto en los usuarios (el equipo de contadores)?", "hint": "Piensa en la transición del sistema antiguo al nuevo y lo que necesitarán los usuarios para ser productivos.", "answerOptions": [{ "text": "El lenguaje de programación en el que está escrito el nuevo software.", "isCorrect": false, "rationale": "A los usuarios finales no les importa la tecnología subyacente, sino cómo el software les ayuda a hacer su trabajo." }, { "text": "La curva de aprendizaje y la necesidad de capacitación para que puedan usar el nuevo sistema de manera efectiva.", "isCorrect": true, "rationale": "El mayor impacto en los usuarios es el cambio en sus procesos de trabajo diarios. Una capacitación inadecuada puede llevar al rechazo del nuevo sistema." }, { "text": "El costo de las licencias del nuevo software.", "isCorrect": false, "rationale": "El costo es un factor de impacto para el negocio, no directamente para los usuarios finales." }, { "text": "El número de líneas de código del nuevo sistema.", "isCorrect": false, "rationale": "Esta es una métrica interna de desarrollo que no tiene relación con el impacto en el usuario." }] },
+                { "question": "Un nuevo sistema de gestión de inventario necesita obtener datos de precios del sistema de ventas existente. Para anticipar los efectos de esta integración, ¿qué debería hacer el arquitecto de software?", "hint": "Es crucial entender cómo se comunicarán los dos sistemas y qué dependencias se crearán.", "answerOptions": [{ "text": "Asumir que la conexión funcionará sin problemas.", "isCorrect": false, "rationale": "Asumir dependencias externas sin un análisis es una receta para el desastre." }, { "text": "Crear un diagrama de contexto y analizar la API del sistema de ventas para entender cómo se intercambiarán los datos.", "isCorrect": true, "rationale": "Esto permite identificar dependencias, posibles cuellos de botella y los requisitos técnicos de la integración antes de empezar a construir." }, { "text": "Pedir al equipo de ventas que introduzca los precios manualmente en el nuevo sistema.", "isCorrect": false, "rationale": "Esto crearía una ineficiencia operativa y un riesgo de error humano, en lugar de anticipar el impacto técnico." }, { "text": "Esperar hasta el final del proyecto para probar la conexión.", "isCorrect": false, "rationale": "Descubrir problemas de integración al final es extremadamente costoso y arriesgado." }] },
+                { "question": "Al redactar una Declaración de Alcance, además de listar todas las funcionalidades que se incluirán, ¿por qué es igualmente importante incluir una sección de 'Fuera de Alcance'?", "hint": "Esta sección ayuda a evitar malentendidos y suposiciones incorrectas por parte de los stakeholders.", "answerOptions": [{ "text": "Para que el documento parezca más largo y completo.", "isCorrect": false, "rationale": "La longitud no es el objetivo; la claridad sí lo es." }, { "text": "Para gestionar las expectativas de manera explícita, dejando claro qué funcionalidades no se construirán en este proyecto.", "isCorrect": true, "rationale": "Esto es crucial para evitar el 'oh, pero yo asumí que eso estaba incluido'. Establece límites claros y previene conflictos futuros." }, { "text": "Para listar las funcionalidades que fallaron en proyectos anteriores.", "isCorrect": false, "rationale": "El alcance se refiere a este proyecto en particular, no al historial de la empresa." }, { "text": "Para que el equipo de desarrollo sepa en qué puede trabajar en su tiempo libre.", "isCorrect": false, "rationale": "El trabajo fuera de alcance no debe ser realizado; esta sección sirve para prevenirlo, no para fomentarlo." }] },
+                { "question": "Una startup quiere lanzar una nueva aplicación de red social. ¿Qué funcionalidades debería incluir en su Producto Mínimo Viable (MVP)?", "hint": "El MVP no es el producto con todas las características imaginables, sino el que resuelve el problema central de la forma más sencilla posible.", "answerOptions": [{ "text": "Registro, perfil de usuario, la capacidad de publicar un mensaje y ver los mensajes de otros.", "isCorrect": true, "rationale": "Este es el conjunto de características más pequeño que permite que la funcionalidad principal (una red social) exista y aporte valor, permitiendo aprender de los usuarios reales." }, { "text": "Todas las funcionalidades que tienen Facebook e Instagram, incluyendo mensajería, historias, reels y mercado.", "isCorrect": false, "rationale": "Intentar construir todo esto desde el principio es inviable y no permite validar la idea central del producto rápidamente." }, { "text": "Solamente la función de registro de usuarios.", "isCorrect": false, "rationale": "Esto no es suficiente para ser un producto viable, ya que el usuario no puede hacer nada de valor después de registrarse." }, { "text": "Un sistema avanzado de monetización y publicidad.", "isCorrect": false, "rationale": "La monetización es importante a largo plazo, pero el MVP debe centrarse primero en crear valor para el usuario y validar la idea." }] },
+                { "question": "Un equipo inicia un proyecto con el supuesto de que 'los usuarios estarán dispuestos a subir una foto de su DNI para verificar su identidad'. ¿Cuál es la forma más efectiva de validar este supuesto?", "hint": "La mejor manera de saber si los usuarios harán algo es intentar que lo hagan en un entorno controlado.", "answerOptions": [{ "text": "Preguntar al equipo de desarrollo si creen que es una buena idea.", "isCorrect": false, "rationale": "La opinión interna del equipo no es un dato válido sobre el comportamiento real de los usuarios." }, { "text": "Construir la aplicación completa y ver si la gente lo usa después del lanzamiento.", "isCorrect": false, "rationale": "Este es el método más caro y arriesgado. Si el supuesto es incorrecto, todo el proyecto podría fracasar." }, { "text": "Crear un prototipo o una página de destino que simule el proceso y medir cuántos usuarios lo completan o lo abandonan.", "isCorrect": true, "rationale": "Este es un experimento de bajo costo que proporciona datos reales sobre el comportamiento del usuario, validando (o invalidando) el supuesto antes de invertir en el desarrollo completo." }, { "text": "Asumir que es correcto porque otras aplicaciones lo hacen.", "isCorrect": false, "rationale": "El comportamiento del usuario puede variar mucho dependiendo del contexto de la aplicación y la confianza que genere." }] }
+            ]
+        };
 
+        const quizContainer = document.getElementById('quiz-container');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const progressContainer = document.getElementById('progress-container');
+        let currentQuestionIndex = 0;
+
+        function showQuestion(index) {
+            quizContainer.innerHTML = '';
+
+            nextButton.style.display = 'none';
+            restartButton.style.display = 'none';
+
+            if (index >= quizData.questions.length) {
+                quizContainer.innerHTML = `
+                    <div class="question-card p-8 rounded-lg shadow-lg text-center">
+                        <h2 class="text-2xl font-bold text-white">¡Has completado el quiz!</h2>
+                        <p class="text-gray-400 mt-4">¡Excelente trabajo! Has repasado todos los conceptos clave.</p>
+                    </div>
+                `;
+                progressContainer.textContent = `Completado: ${quizData.questions.length} de ${quizData.questions.length}`;
+                restartButton.style.display = 'inline-block';
+                return;
+            }
+
+            progressContainer.textContent = `Pregunta ${index + 1} de ${quizData.questions.length}`;
+
+            const q = quizData.questions[index];
+            const questionCard = document.createElement('div');
+            questionCard.className = 'question-card p-6 rounded-lg shadow-lg';
+
+            let optionsHTML = '';
+            q.answerOptions.forEach((opt, optIndex) => {
+                optionsHTML += `<div class="option p-4 rounded-lg cursor-pointer mt-3" data-is-correct="${opt.isCorrect}">${String.fromCharCode(65 + optIndex)}. ${opt.text}</div>`;
+            });
+
+            const correctRationale = q.answerOptions.find(opt => opt.isCorrect).rationale;
+
+            questionCard.innerHTML = `
+                <h2 class="text-xl font-semibold text-white">${q.question}</h2>
+                <p class="text-sm text-gray-400 mt-2 italic"><strong>Pista:</strong> ${q.hint}</p>
+                <div class="options-container mt-4">${optionsHTML}</div>
+                <div class="correct-rationale-container p-4 mt-4 rounded-md">
+                    <p class="font-bold">Explicación:</p>
+                    <p class="mt-1">${correctRationale}</p>
+                </div>
+            `;
+            quizContainer.appendChild(questionCard);
+
+            const optionsContainer = questionCard.querySelector('.options-container');
+            optionsContainer.addEventListener('click', (event) => {
+                const selectedOption = event.target.closest('.option');
+                if (!selectedOption || optionsContainer.classList.contains('answered')) {
+                    return;
+                }
+
+                optionsContainer.classList.add('answered');
+                const isCorrect = selectedOption.getAttribute('data-is-correct') === 'true';
+
+                optionsContainer.querySelectorAll('.option').forEach(opt => {
+                    if (opt.getAttribute('data-is-correct') === 'true') {
+                        opt.classList.add('correct');
+                    } else {
+                        opt.classList.add('incorrect');
+                    }
+                });
+
+                if (!isCorrect) {
+                    const rationaleContainer = questionCard.querySelector('.correct-rationale-container');
+                    rationaleContainer.style.display = 'block';
+                }
+
+                nextButton.style.display = 'inline-block';
+            });
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        });
+
+        restartButton.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            showQuestion(currentQuestionIndex);
+        });
+
+        // Iniciar el quiz
+        showQuestion(currentQuestionIndex);
+
+    </script>
 </body>
+
 </html>
