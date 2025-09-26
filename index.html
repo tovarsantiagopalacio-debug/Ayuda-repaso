@@ -12,7 +12,8 @@
             /* Un fondo oscuro profundo */
         }
 
-        .question-card {
+        .question-card,
+        .results-card {
             background-color: #1e1e1e;
             border: 1px solid #333;
         }
@@ -66,6 +67,14 @@
             background-color: #2563eb;
             /* blue-700 */
         }
+
+        .result-item-correct {
+            border-left: 4px solid #22c55e;
+        }
+
+        .result-item-incorrect {
+            border-left: 4px solid #ef4444;
+        }
     </style>
 </head>
 
@@ -77,7 +86,7 @@
         </header>
 
         <main id="quiz-container">
-            <!-- La pregunta actual se insertará aquí -->
+            <!-- La pregunta actual o los resultados se insertarán aquí -->
         </main>
 
         <footer class="mt-8 text-center">
@@ -134,6 +143,7 @@
         const restartButton = document.getElementById('restart-btn');
         const progressContainer = document.getElementById('progress-container');
         let currentQuestionIndex = 0;
+        let userAnswers = [];
 
         function showQuestion(index) {
             quizContainer.innerHTML = '';
@@ -142,14 +152,7 @@
             restartButton.style.display = 'none';
 
             if (index >= quizData.questions.length) {
-                quizContainer.innerHTML = `
-                    <div class="question-card p-8 rounded-lg shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-white">¡Has completado el quiz!</h2>
-                        <p class="text-gray-400 mt-4">¡Excelente trabajo! Has repasado todos los conceptos clave.</p>
-                    </div>
-                `;
-                progressContainer.textContent = `Completado: ${quizData.questions.length} de ${quizData.questions.length}`;
-                restartButton.style.display = 'inline-block';
+                showResults();
                 return;
             }
 
@@ -161,7 +164,7 @@
 
             let optionsHTML = '';
             q.answerOptions.forEach((opt, optIndex) => {
-                optionsHTML += `<div class="option p-4 rounded-lg cursor-pointer mt-3" data-is-correct="${opt.isCorrect}">${String.fromCharCode(65 + optIndex)}. ${opt.text}</div>`;
+                optionsHTML += `<div class="option p-4 rounded-lg cursor-pointer mt-3" data-is-correct="${opt.isCorrect}" data-text="${opt.text}">${String.fromCharCode(65 + optIndex)}. ${opt.text}</div>`;
             });
 
             const correctRationale = q.answerOptions.find(opt => opt.isCorrect).rationale;
@@ -187,6 +190,13 @@
                 optionsContainer.classList.add('answered');
                 const isCorrect = selectedOption.getAttribute('data-is-correct') === 'true';
 
+                userAnswers[index] = {
+                    question: q.question,
+                    selected: selectedOption.getAttribute('data-text'),
+                    isCorrect: isCorrect,
+                    correctAnswer: q.answerOptions.find(opt => opt.isCorrect).text
+                };
+
                 optionsContainer.querySelectorAll('.option').forEach(opt => {
                     if (opt.getAttribute('data-is-correct') === 'true') {
                         opt.classList.add('correct');
@@ -204,6 +214,43 @@
             });
         }
 
+        function showResults() {
+            quizContainer.innerHTML = '';
+            progressContainer.textContent = '';
+            nextButton.style.display = 'none';
+
+            const correctAnswersCount = userAnswers.filter(a => a.isCorrect).length;
+            const totalQuestions = quizData.questions.length;
+            const scorePercentage = (correctAnswersCount / totalQuestions) * 100;
+            const passingScore = 70;
+            const passed = scorePercentage >= passingScore;
+
+            let resultsHTML = `
+                <div class="results-card p-8 rounded-lg shadow-lg text-center">
+                    <h2 class="text-3xl font-bold ${passed ? 'text-green-400' : 'text-red-400'}">${passed ? '¡Aprobado!' : 'Necesitas repasar'}</h2>
+                    <p class="text-xl text-white mt-4">Tu calificación: ${correctAnswersCount} de ${totalQuestions} (${scorePercentage.toFixed(0)}%)</p>
+                    <p class="text-gray-400 mt-2">Se requiere un ${passingScore}% para aprobar.</p>
+                </div>
+                <div class="results-summary mt-8">
+                    <h3 class="text-2xl font-bold text-white mb-4 text-center">Resumen de tus respuestas</h3>
+            `;
+
+            userAnswers.forEach((answer, index) => {
+                const resultClass = answer.isCorrect ? 'result-item-correct' : 'result-item-incorrect';
+                resultsHTML += `
+                    <div class="p-4 rounded-md mt-4 ${resultClass}" style="background-color: #1e1e1e;">
+                        <p class="font-semibold text-white">${index + 1}. ${answer.question}</p>
+                        <p class="text-sm mt-2 ${answer.isCorrect ? 'text-green-400' : 'text-red-400'}">Tu respuesta: ${answer.selected}</p>
+                        ${!answer.isCorrect ? `<p class="text-sm mt-1 text-blue-400">Respuesta correcta: ${answer.correctAnswer}</p>` : ''}
+                    </div>
+                `;
+            });
+
+            resultsHTML += `</div>`;
+            quizContainer.innerHTML = resultsHTML;
+            restartButton.style.display = 'inline-block';
+        }
+
         nextButton.addEventListener('click', () => {
             currentQuestionIndex++;
             showQuestion(currentQuestionIndex);
@@ -211,6 +258,7 @@
 
         restartButton.addEventListener('click', () => {
             currentQuestionIndex = 0;
+            userAnswers = [];
             showQuestion(currentQuestionIndex);
         });
 
